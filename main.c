@@ -1,34 +1,9 @@
-/** 
-RE: detect and extract subqueries last go's Remake: see comment inside the code: This (last one) works! 
-go ahead and perfect it!
- */
-/*
-the detection of the quoted text works pretty well
-The detection of the subqueries must be completely reworked: 
-    Detect first if we are inside a pair of parantheses (inside a block) then search for the
-    first block in this block to be 'select'; that's all
-NOTE: the actual version doesn't work if the current check position is inside another group of parantheses
-    REWORK
 
-*/
-
-/** Permanent link: http://rextester.com/OMAM60845 */
-/** Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23506 for x86 */
-/** Get subqueries from a SQL string */
-/** code by Twareintor */
-/** DISCLAIMER: not fully tested and implemented, no responsibility for results */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
+#include "ver.h"
 
 #include "testData.h"
+#include "delimiters.h"
 
-int getCurrentQuotes(char** szText, const char* szCode, const size_t codeSize, const char* szPos, const char szQuote);
-
-int getCurrentSubquery(char** szText, const char* szCode, const size_t codeSize, const char* szPos);
-
-int getCurrentSubquery2(char** szText, const char* szCode, const size_t codeSize, const char* szPos);
 
 void test__getCurrentSubquery();
 void test__getCurrentQuotes();
