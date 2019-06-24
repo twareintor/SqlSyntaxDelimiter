@@ -1,13 +1,26 @@
-
 #include "ver.h"
+
+#include <windows.h>
 
 #include "testData.h"
 #include "delimiters.h"
+#include "subqueries.h"
+#include "subqueries.c"
 
-
+/**
+ * Test getting the text included between quotation marks. 
+ * see "getCurrentQuotes()" function for full description
+ */
 void test__getCurrentSubquery();
+
+
+/** 
+ * Test getting subqueries in a query.
+ * See "getCurrentSubquery()" description for more info about the tested function.
+ */
 void test__getCurrentQuotes();
 
+/** return function */
 int main(void)
 {
     test__getCurrentSubquery();
@@ -85,98 +98,6 @@ void test__getCurrentSubquery()
     /*******/
     if(szText) GlobalFree(szText);
     
-}
-
-int getCurrentSubquery2(char** szText, const char* szCode, const size_t codeSize, const char* szPos)
-{
-    if(!szPos) return -3429;
-    
-    while(0);
-    
-}
-
-int getCurrentSubquery(char** szText, const char* szCode, const size_t codeSize, const char* szPos)
-{
-    if(!szPos) return -3234;
-    const char* szKey = "select";
-    int isOoScope; /** if 'out of scope' means is inside a closed pair of (), if 0 is in scope */
-    isOoScope = 0;
-    while(szPos>=szCode && szPos<=(szCode+codeSize))
-    {
-        if(0==isOoScope)
-        {
-            if(*szKey==*szPos) /** if the 's' from 'select' fits... */
-            {
-                if(!memcmp(szKey, szPos, 6)) /** if the whole word 'select' fits... */
-                {
-                    if(!(0x61<*(szPos-1)&&*(szPos-1)<0x7a || 0x61<*(szPos+strlen(szKey))&&*(szPos+strlen(szKey))<0x7a))
-                    { /** ... if not a letter, then */
-                        szText[0] = szPos;
-                        if(szPos==szCode) /** if is at the very beginning... */
-                        {
-                            szText[1] = szCode+codeSize;
-                            return 0;
-                        }
-                        else
-                        {
-                            int nOdd = 1;
-                            while(nOdd && szPos<(szCode+codeSize))
-                            {
-                                nOdd+=((0x28==*szPos)-(0x29==*szPos));
-                                szPos++;
-                            }
-                            szText[1] = szPos-1;
-                            return 0;
-                        }   
-                    }
-                }
-            }
-        }
-        szPos--;
-        isOoScope+=((0x29==*szPos)-(0x28==*szPos));
-        if(isOoScope<0) isOoScope = 0; /** no way to became negative, when cursor inide a () with no select */
-        
-    }
-    return -3209;
-}
-
-
-int getCurrentQuotes(char** szText, const char* szCode, const size_t codeSize, const char* szPos, const char szQuote)
-{
-    if(!szPos) return -3449;
-    size_t i = 0; /** to let unchanged the szCode */
-    size_t pos = szPos-szCode;
-    int nOdd = 0; /** switches 1/0/1/0 with every found qualifier; if 1 till szPos, is inside (odd nr. of '-s) */
-    while(i<=(szPos-szCode))
-    {
-        if(szQuote==*(szCode+i))
-        {
-            nOdd = !nOdd;
-            if(nOdd)
-            {
-                szText[0] = szCode+i+1; /** do not include the begin quote */
-            }
-        }
-        i++;
-    }
-    if(nOdd)
-    {
-        while(i<codeSize)
-        {
-            if(szQuote==*(szCode+i))
-            {
-                szText[1] = szCode+i; /** do not include the end quote */
-                return 0;
-            }
-            i++;
-        }
-    }
-    else
-    {
-        szText[1] = szCode+codeSize;
-        return -3222;
-    }
-    return -3209;
 }
 
 
